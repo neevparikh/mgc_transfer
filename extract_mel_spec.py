@@ -10,7 +10,7 @@ import numpy as np
 import librosa
 import librosa.display
 import matplotlib.pyplot as plt
-from tdqm import tdqm 
+from tqdm import tqdm 
 
 
 def make_label_dic(path_to_metadata):
