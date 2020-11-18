@@ -57,7 +57,7 @@ def make_mel_spectrogram_df(directory):
         num_to_label_dic = pickle.load(f)
 
     # Looping through each file in the directory
-    for f in tqdm(glob.glob('{}/**/*.mp3'.format(directory))):
+    for f in tqdm(glob.glob('{}/*.mp3'.format(directory))):
         try:
             y, sr = librosa.load(f)
 
@@ -66,7 +66,7 @@ def make_mel_spectrogram_df(directory):
             name_val = re.sub("^0+", "", curr_name)
             label = num_to_label_dic.get(int(name_val))
 
-            print(label)
+            tqdm.write(label)
             labels.append(label)
 
             # Computing the mel spectrograms
@@ -80,8 +80,8 @@ def make_mel_spectrogram_df(directory):
             # Flattening to fit into dataframe and adding to the list
             spect = spect.flatten()
             mel_specs.append(spect)
-        except:
-            print("error received, file likely broken")
+        except Exception as e:
+            tqdm.write(e)
             continue
 
     # Converting the lists to arrays so we can stack them
