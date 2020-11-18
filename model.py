@@ -9,17 +9,9 @@ _YAMNET_LAYER_DEFS = [
     (_conv, [3, 3], 2, 3, 32),
     (_separable_conv, [3, 3], 1, 32, 64),
     (_separable_conv, [3, 3], 2, 64, 128),
-    (_separable_conv, [3, 3], 1, 128, 128),
     (_separable_conv, [3, 3], 2, 128, 256),
-    (_separable_conv, [3, 3], 1, 256, 256),
     (_separable_conv, [3, 3], 2, 256, 512),
     (_separable_conv, [3, 3], 1, 512, 512),
-    (_separable_conv, [3, 3], 1, 512, 512),
-    (_separable_conv, [3, 3], 1, 512, 512),
-    (_separable_conv, [3, 3], 1, 512, 512),
-    (_separable_conv, [3, 3], 1, 512, 512),
-    (_separable_conv, [3, 3], 2, 512, 1024),
-    (_separable_conv, [3, 3], 1, 1024, 1024)
 ]
 
 class GenreNet(pl.LightningModule):
@@ -33,12 +25,12 @@ class GenreNet(pl.LightningModule):
         final_size = input_shape
         for _, kernel, stride, _, _ in _YAMNET_LAYER_DEFS:
             final_size = conv2d_size_out(final_size, kernel_size=kernel, stride=stride)
-        
-        self.body = torch.nn.Sequential(map(lambda t: t[0](*t[1:], _YAMNET_LAYER_DEFS)))
+
+        self.body = torch.nn.Sequential(*map(lambda t: t[0](*t[1:]), _YAMNET_LAYER_DEFS))
 
         self.head = torch.nn.Sequential(
                     torch.nn.AvgPool2d(final_size),
-                    torch.nn.Linear(final_size, num_classes),
+                    torch.nn.Linear(final_size[0] * final_size[0], num_classes),
                     torch.nn.Softmax(),
                 )
 
@@ -53,6 +45,13 @@ class GenreNet(pl.LightningModule):
         return predictions
     
     def training_step(self, batch, batch_idx):
+        sterograms, labels = batch
+        predictions = self(sterograms)
+        loss = torch.nn.functional.cross_entropy(predictions, labels)
+        self.log('training_loss', loss, on_epoch=True, on_step=True)
+        return loss
+
+    def val_step(self, batch, batch_idx):
         sterograms, labels = batch
         predictions = self(sterograms)
         loss = torch.nn.functional.cross_entropy(predictions, labels)

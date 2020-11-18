@@ -8,5 +8,5 @@ common_parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefault
 
 common_parser.add_argument('--lr', type=float, required=True,
         help='Learning rate')
-common_parser.add_argument('--dataset', type=float, required=True, choices=['FMA', 'GTZAN'],
+common_parser.add_argument('--dataset', type=str, required=True, choices=['FMA', 'GTZAN'],
         help='Dataset type')
