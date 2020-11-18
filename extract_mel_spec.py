@@ -44,7 +44,7 @@ def make_label_dic(path_to_metadata):
         genre = str(row[('track', 'genre_top')])
         num_to_label_dic[track_id] = genre
 
-    with open('label_dic.pkl') as f:
+    with open('label_dic.pkl', 'wb') as f:
         pickle.dump(num_to_label_dic, f)
 
 def make_mel_spectrogram_df(directory):
@@ -53,7 +53,7 @@ def make_mel_spectrogram_df(directory):
     labels = []
     mel_specs = []
 
-    with open('label_dic.pkl') as f:
+    with open('label_dic.pkl', 'rb') as f:
         num_to_label_dic = pickle.load(f)
 
     # Looping through each file in the directory
