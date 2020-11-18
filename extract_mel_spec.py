@@ -63,8 +63,7 @@ def make_mel_spectrogram_df(directory):
 
             # Extracting the label and adding it to the list
             curr_name = os.path.basename(f)
-            name_val = re.sub("^0+", "", curr_name)
-            label = num_to_label_dic.get(int(name_val))
+            label = num_to_label_dic.get(int(curr_name[:-4]))
 
             tqdm.write(label)
             labels.append(label)
@@ -81,7 +80,7 @@ def make_mel_spectrogram_df(directory):
             spect = spect.flatten()
             mel_specs.append(spect)
         except Exception as e:
-            tqdm.write(e)
+            tqdm.write(str(e))
             continue
 
     # Converting the lists to arrays so we can stack them
