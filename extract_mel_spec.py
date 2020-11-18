@@ -103,8 +103,8 @@ def make_mel_spectrogram_df(directory):
 
 warnings.simplefilter("ignore")
 if not os.path.isfile('label_dic.pkl'):
+    print('making label dict')
     make_label_dic('tracks.csv')
 
 df = make_mel_spectrogram_df(sys.argv[1])
-df.to_csv('{}.csv'.format(sys.argv[1])
-
+df.to_csv('{}.csv'.format(sys.argv[1]))
