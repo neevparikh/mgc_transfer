@@ -4,7 +4,7 @@ from model import GenreNet
 from parsers import common_parser
 
 
-IMG_SHAPE = (120, 120)
+IMG_SHAPE = (128, 640)
 
 num_classes = {
         'FMA': 8,
