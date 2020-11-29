@@ -3,16 +3,16 @@ import os
 import numpy as np
 
 DATA_DIR = './data'
-files = [
-    'gtzan.csv',
-    # 'fma_small_combined.csv',
-    # 'fma_large_combined.csv',
-]
+files = {
+    # 'gtzan.csv': '84480',
+    'fma_small_combined.csv': '81920',
+    'fma_large_combined.csv': '81920',
+}
 
-for f in files:
+for f, lk in files.items():
     df = pd.read_csv(os.path.join(DATA_DIR, f))
-    labels = df['84480'].to_numpy()
-    del df['84480']
+    labels = df[lk].to_numpy()
+    del df[lk]
     spects = df.to_numpy()
     spects = spects.reshape(spects.shape[0], 128, -1)
     np.savez_compressed(
