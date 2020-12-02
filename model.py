@@ -21,6 +21,7 @@ class GenreNet(pl.LightningModule):
         super().__init__()
 
         self.args = args
+        self.lr = args.lr
 
         final_size = input_shape
         for _, kernel, stride, _, _ in _YAMNET_LAYER_DEFS:
@@ -58,5 +59,5 @@ class GenreNet(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr=self.args.lr)
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         return optimizer

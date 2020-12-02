@@ -17,4 +17,5 @@ else:
 data.prepare_data()
 data.setup('fit')
 net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)
-trainer = pl.Trainer(gpus=4)
+trainer = pl.Trainer(gpus=4, auto_lr_find=True)
+trainer.tune(net)
