@@ -14,5 +14,6 @@ elif args.dataset == 'GTZAN':
     data = GTZAN()
 else:
     raise ValueError("Unrecognized dataset")
-
-net = GenreNet(args, input_shape=data.shape, num_classes=data.labels)
+data.prepare_data()
+data.setup('fit')
+net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)

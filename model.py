@@ -25,12 +25,11 @@ class GenreNet(pl.LightningModule):
         final_size = input_shape
         for _, kernel, stride, _, _ in _YAMNET_LAYER_DEFS:
             final_size = conv2d_size_out(final_size, kernel_size=kernel, stride=stride)
-
         self.body = torch.nn.Sequential(*map(lambda t: t[0](*t[1:]), _YAMNET_LAYER_DEFS))
 
         self.head = torch.nn.Sequential(
                     torch.nn.AvgPool2d(final_size),
-                    torch.nn.Linear(final_size[0] * final_size[0], num_classes),
+                    torch.nn.Linear(final_size[0] * final_size[1], num_classes),
                     torch.nn.Softmax(),
                 )
 
