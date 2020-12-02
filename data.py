@@ -7,14 +7,15 @@ import numpy as np
 import torch
 from torch.utils.data import random_split, DataLoader, TensorDataset
 
-DATA_DIR = './data/npz'
+from constants import DATA_DIR, BATCHSIZE
+
 splits = [0.5, 0.3, 0.2]
-BATCHSIZE = 64
 
 def get_data(name):
     data = np.load(os.path.join(DATA_DIR, name), allow_pickle=True)
     unique_labels, labels = np.unique(data['labels'], return_inverse=True)
-    return labels, data['spects']
+    spects = np.expand_dims(data['spects'], axis=1) 
+    return labels, spects.astype(np.float16)
 
 class FMA(pl.LightningDataModule):
     shape = (128, 640)

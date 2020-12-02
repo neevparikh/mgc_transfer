@@ -1,5 +1,26 @@
 import torch
 
+class Reshape(torch.nn.Module):
+    """
+    Description:
+        Module that returns a view of the input which has a different size
+
+    Parameters:
+        - args : Int...
+            The desired size
+    """
+    def __init__(self, *args):
+        super().__init__()
+        self.shape = args
+
+    def __repr__(self):
+        s = self.__class__.__name__
+        s += '{}'.format(self.shape)
+        return s
+
+    def forward(self, x):
+        return x.squeeze().view(*self.shape)
+
 
 def _conv(kernel, stride, inc, outc):
     return torch.nn.Sequential(
