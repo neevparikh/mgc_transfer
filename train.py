@@ -2,14 +2,17 @@ import pytorch_lightning as pl
 
 from model import GenreNet
 from parsers import common_parser
-
-
-IMG_SHAPE = (128, 640)
-
-num_classes = {
-        'FMA': 8,
-        'GTZAN': 10,
-    } 
+from data import FMA_Large, FMA_Small, GTZAN
 
 args = common_parser.parse_args()
-net = GenreNet(args, input_shape=IMG_SHAPE, num_classes=num_classes[args.dataset])
+
+if args.dataset == 'FMA_L':
+    data = FMA_Large()
+elif args.dataset == 'FMA_S':
+    data = FMA_Small()
+elif args.dataset == 'GTZAN':
+    data = GTZAN()
+else:
+    raise ValueError("Unrecognized dataset")
+
+net = GenreNet(args, input_shape=data.shape, num_classes=data.labels)

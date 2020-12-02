@@ -1,55 +1,72 @@
-import os 
+import os
+import math
 
 import pytorch_lightning as pl
-from torch.utils.data import random_split, DataLoader
 import pandas as pd
+import numpy as np
+import torch
+from torch.utils.data import random_split, DataLoader, TensorDataset
 
-DATA_DIR = './data'
+DATA_DIR = './data/npz'
+splits = [0.5, 0.3, 0.2]
+BATCHSIZE = 64
 
-class FMA_Small(pl.LightningDataModule):
-    def prepare_data(self):
-        self.df = pd.read_csv(os.path.join(DATA_DIR, 'fma_small_combined.csv'))
+def get_data(name):
+    data = np.load(os.path.join(DATA_DIR, name), allow_pickle=True)
+    unique_labels, labels = np.unique(data['labels'], return_inverse=True)
+    return labels, data['spects']
 
-    def setup(self, stage=None):
-        pass
-
-    def train_dataloader(self):
-        pass
-
-    def val_dataloader(self):
-        pass
-
-    def test_dataloader(self):
-        pass
-
-class FMA_Large(pl.LightningDataModule):
-    def prepare_data(self):
-        self.df = pd.read_csv(os.path.join(DATA_DIR, 'fma_large_combined.csv'))
-
-    def setup(self, stage=None):
-        pass
+class FMA(pl.LightningDataModule):
+    shape = (128, 640)
+    num_labels = 8
 
     def train_dataloader(self):
-        pass
+        return DataLoader(self.train, batch_size=BATCHSIZE)
 
     def val_dataloader(self):
-        pass
+        return DataLoader(self.val, batch_size=BATCHSIZE)
 
     def test_dataloader(self):
-        pass
+        return DataLoader(self.test, batch_size=BATCHSIZE)
+
+class FMA_Large(FMA):
+    def setup(self, stage=None):
+        self.labels, self.spects = get_data('fma_large_combined.npz')
+        self.labels = torch.from_numpy(self.labels)
+        self.spects = torch.from_numpy(self.spects)
+        self.dataset = TensorDataset(self.spects, self.labels)
+        split = [math.floor(len(self.dataset) * x) for x in splits]
+        split[-1] += len(self.dataset) - sum(split)
+        self.train, self.val, self.test = random_split(self.dataset, split, generator=None)
+
+class FMA_Small(FMA):
+    def setup(self, stage=None):
+        self.labels, self.spects = get_data('fma_small_combined.npz')
+        self.labels = torch.from_numpy(self.labels)
+        self.spects = torch.from_numpy(self.spects)
+        self.dataset = TensorDataset(self.spects, self.labels)
+        split = [math.floor(len(self.dataset) * x) for x in splits]
+        split[-1] += len(self.dataset) - sum(split)
+        self.train, self.val, self.test = random_split(self.dataset, split, generator=None)
 
 class GTZAN(pl.LightningDataModule):
-    def prepare_data(self):
-        df = pd.read_csv(os.path.join(DATA_DIR, 'gtzan.csv'))
-
     def setup(self, stage=None):
-        pass
+        self.shape = (128, 660)
+        self.num_labels = 10
+
+        self.labels, self.spects = get_data('gtzan.npz')
+        self.labels = torch.from_numpy(self.labels)
+        self.spects = torch.from_numpy(self.spects)
+        self.dataset = TensorDataset(self.spects, self.labels)
+        split = [math.floor(len(self.dataset) * x) for x in splits]
+        split[-1] += len(self.dataset) - sum(split)
+        self.train, self.val, self.test = random_split(self.dataset, split, generator=None)
 
     def train_dataloader(self):
-        pass
+        return DataLoader(self.train, batch_size=BATCHSIZE, pin_memory=True)
 
     def val_dataloader(self):
-        pass
+        return DataLoader(self.val, batch_size=BATCHSIZE, pin_memory=True)
 
     def test_dataloader(self):
-        pass
+        return DataLoader(self.test, batch_size=BATCHSIZE, pin_memory=True)
