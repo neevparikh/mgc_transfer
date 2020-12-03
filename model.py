@@ -33,7 +33,7 @@ class GenreNet(pl.LightningModule):
                     torch.nn.AvgPool2d(final_size),
                     Reshape(BATCHSIZE, -1),
                     torch.nn.Linear(_YAMNET_LAYER_DEFS[-1][-1], num_classes),
-                    torch.nn.Softmax(),
+                    torch.nn.Softmax(-1),
                 )
 
         print(self)
@@ -55,9 +55,16 @@ class GenreNet(pl.LightningModule):
 
     def validation_step(self, batch, batch_idx):
         sterograms, labels = batch
+        return self._shared_eval(sterograms, labels, 'val')
+
+    def test_step(self, batch, batch_idx):
+        sterograms, labels = batch
+        return self._shared_eval(sterograms, labels, 'test')
+
+    def _shared_eval(self, sterograms, labels, prefix):
         predictions = self(sterograms)
         loss = torch.nn.functional.cross_entropy(predictions, labels)
-        self.log('training_loss', loss, on_epoch=True, on_step=True)
+        self.log('{}_loss'.format(prefix), loss, on_epoch=True, on_step=True)
         return loss
 
     def configure_optimizers(self):

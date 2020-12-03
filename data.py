@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from torch.utils.data import random_split, DataLoader, TensorDataset
 
-from constants import DATA_DIR, BATCHSIZE
+from constants import DATA_DIR, BATCHSIZE, NUM_DATA_WORKERS
 
 splits = [0.5, 0.3, 0.2]
 
@@ -22,13 +22,13 @@ class FMA(pl.LightningDataModule):
     num_labels = 8
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=BATCHSIZE)
+        return DataLoader(self.train, batch_size=BATCHSIZE, num_workers=NUM_DATA_WORKERS)
 
     def val_dataloader(self):
-        return DataLoader(self.val, batch_size=BATCHSIZE)
+        return DataLoader(self.val, batch_size=BATCHSIZE, num_workers=NUM_DATA_WORKERS)
 
     def test_dataloader(self):
-        return DataLoader(self.test, batch_size=BATCHSIZE)
+        return DataLoader(self.test, batch_size=BATCHSIZE, num_workers=NUM_DATA_WORKERS)
 
 class FMA_Large(FMA):
     def setup(self, stage=None):
@@ -64,10 +64,10 @@ class GTZAN(pl.LightningDataModule):
         self.train, self.val, self.test = random_split(self.dataset, split, generator=None)
 
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=BATCHSIZE, pin_memory=True)
+        return DataLoader(self.train, batch_size=BATCHSIZE, pin_memory=True, num_workers=NUM_DATA_WORKERS)
 
     def val_dataloader(self):
-        return DataLoader(self.val, batch_size=BATCHSIZE, pin_memory=True)
+        return DataLoader(self.val, batch_size=BATCHSIZE, pin_memory=True, num_workers=NUM_DATA_WORKERS)
 
     def test_dataloader(self):
-        return DataLoader(self.test, batch_size=BATCHSIZE, pin_memory=True)
+        return DataLoader(self.test, batch_size=BATCHSIZE, pin_memory=True, num_workers=NUM_DATA_WORKERS)
