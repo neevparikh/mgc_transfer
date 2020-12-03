@@ -9,6 +9,7 @@ from torch.utils.data import random_split, DataLoader, TensorDataset
 
 from constants import DATA_DIR, BATCHSIZE, NUM_DATA_WORKERS
 
+torch.multiprocessing.set_sharing_strategy('file_allocator')
 splits = [0.5, 0.3, 0.2]
 
 def get_data(name):

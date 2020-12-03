@@ -20,8 +20,8 @@ net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)
 trainer = pl.Trainer(gpus=args.num_gpus,
                      precision=16,
                      accelerator='ddp',
-                     limit_train_batches=0.5,
-                     limit_val_batches=0.5,
-                     limit_test_batches=0.5)
+                     limit_train_batches=1.0,
+                     limit_val_batches=1.0,
+                     limit_test_batches=1.0)
 trainer.fit(net, datamodule=data)
 trainer.test(net, datamodule=data)
