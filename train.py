@@ -17,6 +17,11 @@ else:
 data.prepare_data()
 data.setup('fit')
 net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)
-trainer = pl.Trainer(gpus=args.num_gpus, precision=16, accelerator='ddp', limit_train_batches=0.5, limit_val_batches=0.5, limit_test_batches=0.5)
+trainer = pl.Trainer(gpus=args.num_gpus,
+                     precision=16,
+                     accelerator='ddp',
+                     limit_train_batches=0.5,
+                     limit_val_batches=0.5,
+                     limit_test_batches=0.5)
 trainer.fit(net, datamodule=data)
 trainer.test(net, datamodule=data)

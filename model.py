@@ -1,4 +1,5 @@
 import pytorch_lightning as pl
+from pytorch_lightning.metrics.functional.classification import accuracy
 import torch
 
 from modules import _conv, _separable_conv, Reshape
@@ -23,6 +24,7 @@ class GenreNet(pl.LightningModule):
 
         self.args = args
         self.lr = args.lr
+        self.num_classes = num_classes
 
         final_size = input_shape
         for _, kernel, stride, _, _ in _YAMNET_LAYER_DEFS:
@@ -32,7 +34,7 @@ class GenreNet(pl.LightningModule):
         self.head = torch.nn.Sequential(
                     torch.nn.AvgPool2d(final_size),
                     Reshape(BATCHSIZE, -1),
-                    torch.nn.Linear(_YAMNET_LAYER_DEFS[-1][-1], num_classes),
+                    torch.nn.Linear(_YAMNET_LAYER_DEFS[-1][-1], self.num_classes),
                     torch.nn.Softmax(-1),
                 )
 
@@ -64,7 +66,9 @@ class GenreNet(pl.LightningModule):
     def _shared_eval(self, sterograms, labels, prefix):
         predictions = self(sterograms)
         loss = torch.nn.functional.cross_entropy(predictions, labels)
+        acc = accuracy(predictions, labels, num_classes=self.num_classes)
         self.log('{}_loss'.format(prefix), loss, on_epoch=True, on_step=True)
+        self.log('{}_acc'.format(prefix), acc, on_epoch=True, on_step=True)
         return loss
 
     def configure_optimizers(self):
