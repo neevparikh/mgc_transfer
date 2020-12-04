@@ -16,11 +16,12 @@ def get_data(name):
     data = np.load(os.path.join(DATA_DIR, name), allow_pickle=True)
     unique_labels, labels = np.unique(data['labels'], return_inverse=True)
     spects = np.expand_dims(data['spects'], axis=1) 
+    print(labels.shape, labels[:10])
+    print(spects.shape, spects[:10])
     return labels, spects.astype(np.float16)
 
 class FMA(pl.LightningDataModule):
     shape = (128, 640)
-    num_labels = 8
 
     def train_dataloader(self):
         print("Number of training samples", len(self.train))
@@ -38,6 +39,7 @@ class FMA_Large(FMA):
     def setup(self, stage=None):
         self.labels, self.spects = get_data('fma_large_combined.npz')
         self.labels = torch.from_numpy(self.labels)
+        self.num_labels = 161
         self.spects = torch.from_numpy(self.spects)
         self.dataset = TensorDataset(self.spects, self.labels)
         split = [math.floor(len(self.dataset) * x) for x in splits]
@@ -49,6 +51,7 @@ class FMA_Small(FMA):
         self.labels, self.spects = get_data('fma_small_combined.npz')
         self.labels = torch.from_numpy(self.labels)
         self.spects = torch.from_numpy(self.spects)
+        self.num_labels = 8
         self.dataset = TensorDataset(self.spects, self.labels)
         split = [math.floor(len(self.dataset) * x) for x in splits]
         split[-1] += len(self.dataset) - sum(split)
