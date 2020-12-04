@@ -1,3 +1,1 @@
-BATCHSIZE = 64
 DATA_DIR = './data/npz'
-NUM_DATA_WORKERS = 16

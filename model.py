@@ -4,8 +4,6 @@ import torch
 
 from modules import _conv, _separable_conv, Reshape
 from utils import conv2d_size_out
-from constants import BATCHSIZE
-
 _YAMNET_LAYER_DEFS = [
     # (layer_function, kernel, stride, inc , outc)
     (_conv, [3, 3], 2, 1, 32),
