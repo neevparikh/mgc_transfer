@@ -20,7 +20,7 @@ data.setup('fit')
 if args.pretrained:
     net = GenreNet.load_from_checkpoint(args.pretrained, args=args, input_shape=data.shape,
             num_classes=161)
-    net.head[2] = torch.nn.Linear(_YAMNET_LAYER_DEFS[-1][-1], data.num_classes),
+    net.head[2] = torch.nn.Linear(_YAMNET_LAYER_DEFS[-1][-1], data.num_labels),
 else:
     net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)
 trainer = pl.Trainer(gpus=args.num_gpus,
