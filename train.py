@@ -16,7 +16,10 @@ else:
     raise ValueError("Unrecognized dataset")
 data.prepare_data()
 data.setup()
-net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)
+if args.pretrained:
+    net = GenreNet.load_from_checkpoint(args.pretrained)
+else:
+    net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)
 trainer = pl.Trainer(gpus=args.num_gpus,
                      precision=16 if args.num_gpus > 0 else 32,
                      accelerator='ddp' if args.num_gpus > 0 else None,

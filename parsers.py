@@ -17,3 +17,7 @@ common_parser.add_argument('--batchsize', type=int, required=False, default=64,
 common_parser.add_argument('--dataset', type=str, required=True,
         choices=['FMA_L', 'FMA_S', 'GTZAN'],
         help='Dataset type')
+common_parser.add_argument('--pretrained', type=str, required=False,
+        help='Path to pretrained model')
+common_parser.add_argument('--include', nargs='*', required=False,
+        help='Labels to include, None includes everything')

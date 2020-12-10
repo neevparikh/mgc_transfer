@@ -13,10 +13,16 @@ torch.multiprocessing.set_sharing_strategy('file_descriptor')
 splits = [0.5, 0.3, 0.2]
 
 
-def get_data(name, dtype):
+def get_data(name, dtype, to_keep=None):
     data = np.load(os.path.join(DATA_DIR, name), allow_pickle=True)
-    unique_labels, labels = np.unique(data['labels'], return_inverse=True)
-    spects = np.expand_dims(data['spects'], axis=1)
+    spects, labels = data['spects'], data['labels']
+    if to_keep:
+        idxs = np.isin(labels, to_keep)
+        labels = labels[idxs]
+        spects = spects[idxs]
+    unique_labels, labels = np.unique(labels, return_inverse=True)
+    spects = np.expand_dims(spects, axis=1)
+    print(unique_labels)
     print(labels.shape, labels[:10])
     print(spects.shape, spects[:10])
     return labels, spects.astype(dtype)
@@ -46,7 +52,7 @@ class FMA(pl.LightningDataModule):
 
 class FMA_Large(FMA):
     def setup(self, stage=None):
-        self.labels, self.spects = get_data('fma_large_combined.npz', self.dtype)
+        self.labels, self.spects = get_data('fma_large_combined.npz', self.dtype, self.args.include)
         self.labels = torch.from_numpy(self.labels)
         self.num_labels = 161
         self.spects = torch.from_numpy(self.spects)
@@ -57,8 +63,8 @@ class FMA_Large(FMA):
 
 
 class FMA_Small(FMA):
-    def setup(self, args, stage=None):
-        self.labels, self.spects = get_data('fma_small_combined.npz', self.dtype)
+    def setup(self, stage=None):
+        self.labels, self.spects = get_data('fma_small_combined.npz', self.dtype, self.args.include)
         self.labels = torch.from_numpy(self.labels)
         self.spects = torch.from_numpy(self.spects)
         self.num_labels = 8
@@ -78,7 +84,7 @@ class GTZAN(pl.LightningDataModule):
     def setup(self, stage=None):
         self.shape = (128, 660)
         self.num_labels = 10
-        self.labels, self.spects = get_data('gtzan.npz', self.dtype)
+        self.labels, self.spects = get_data('gtzan.npz', self.dtype, self.args.include)
         self.labels = torch.from_numpy(self.labels)
         self.spects = torch.from_numpy(self.spects)
         self.dataset = TensorDataset(self.spects, self.labels)
