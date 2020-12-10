@@ -17,7 +17,8 @@ else:
 data.prepare_data()
 data.setup('fit')
 if args.pretrained:
-    net = GenreNet.load_from_checkpoint(args.pretrained)
+    net = GenreNet.load_from_checkpoint(args.pretrained, args, input_shape=data.shape,
+            num_classes=data.num_labels)
 else:
     net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)
 trainer = pl.Trainer(gpus=args.num_gpus,
