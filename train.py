@@ -17,7 +17,7 @@ else:
 data.prepare_data()
 data.setup('fit')
 if args.pretrained:
-    net = GenreNet.load_from_checkpoint(args.pretrained, args, input_shape=data.shape,
+    net = GenreNet.load_from_checkpoint(args.pretrained, args=args, input_shape=data.shape,
             num_classes=data.num_labels)
 else:
     net = GenreNet(args, input_shape=data.shape, num_classes=data.num_labels)
