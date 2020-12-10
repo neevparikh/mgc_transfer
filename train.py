@@ -15,7 +15,7 @@ elif args.dataset == 'GTZAN':
 else:
     raise ValueError("Unrecognized dataset")
 data.prepare_data()
-data.setup()
+data.setup('fit')
 if args.pretrained:
     net = GenreNet.load_from_checkpoint(args.pretrained)
 else:
@@ -27,4 +27,5 @@ trainer = pl.Trainer(gpus=args.num_gpus,
                      limit_val_batches=1.0,
                      limit_test_batches=1.0)
 trainer.fit(net, datamodule=data)
+data.setup('test')
 trainer.test(net, datamodule=data)

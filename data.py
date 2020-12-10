@@ -52,7 +52,11 @@ class FMA(pl.LightningDataModule):
 
 class FMA_Large(FMA):
     def setup(self, stage=None):
-        self.labels, self.spects = get_data('fma_large_combined.npz', self.dtype, self.args.include)
+        if stage == 'fit':
+            self.labels, self.spects = get_data('fma_large_combined.npz', self.dtype,
+                    self.args.include)
+        if stage == 'test':
+            self.labels, self.spects = get_data('fma_large_combined.npz', self.dtype)
         self.labels = torch.from_numpy(self.labels)
         self.num_labels = 161
         self.spects = torch.from_numpy(self.spects)
@@ -64,7 +68,11 @@ class FMA_Large(FMA):
 
 class FMA_Small(FMA):
     def setup(self, stage=None):
-        self.labels, self.spects = get_data('fma_small_combined.npz', self.dtype, self.args.include)
+        if stage == 'fit':
+            self.labels, self.spects = get_data('fma_small_combined.npz', self.dtype,
+                    self.args.include)
+        if stage == 'test':
+            self.labels, self.spects = get_data('fma_small_combined.npz', self.dtype)
         self.labels = torch.from_numpy(self.labels)
         self.spects = torch.from_numpy(self.spects)
         self.num_labels = 8
@@ -84,7 +92,10 @@ class GTZAN(pl.LightningDataModule):
     def setup(self, stage=None):
         self.shape = (128, 660)
         self.num_labels = 10
-        self.labels, self.spects = get_data('gtzan.npz', self.dtype, self.args.include)
+        if stage == 'fit':
+            self.labels, self.spects = get_data('gtzan.npz', self.dtype, self.args.include)
+        if stage == 'test':
+            self.labels, self.spects = get_data('gtzan.npz', self.dtype)
         self.labels = torch.from_numpy(self.labels)
         self.spects = torch.from_numpy(self.spects)
         self.dataset = TensorDataset(self.spects, self.labels)
