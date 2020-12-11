@@ -8,10 +8,11 @@ import torch
 from torch.utils.data import random_split, DataLoader, TensorDataset
 
 from constants import DATA_DIR
+from utils import genre_to_label
 
 torch.multiprocessing.set_sharing_strategy('file_descriptor')
 splits = [0.5, 0.3, 0.2]
-
+genre_to_label = np.vectorize(genre_to_label)
 
 def get_data(name, dtype, to_keep=None):
     data = np.load(os.path.join(DATA_DIR, name), allow_pickle=True)
@@ -20,11 +21,10 @@ def get_data(name, dtype, to_keep=None):
         idxs = np.isin(labels, to_keep)
         labels = labels[idxs]
         spects = spects[idxs]
-    unique_labels, labels = np.unique(labels, return_inverse=True)
+    labels = genre_to_label(labels)
     spects = np.expand_dims(spects, axis=1)
-    print(unique_labels)
-    print(labels.shape, labels[:10])
-    print(spects.shape, spects[:10])
+    print(labels.shape, labels[:2])
+    print(spects.shape, spects[:2])
     return labels, spects.astype(dtype)
 
 

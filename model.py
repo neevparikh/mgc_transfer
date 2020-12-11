@@ -1,5 +1,5 @@
 import pytorch_lightning as pl
-from pytorch_lightning.metrics.functional.classification import accuracy
+from pytorch_lightning.metrics import Accuracy
 import torch
 
 from modules import _conv, _separable_conv, Reshape
@@ -23,6 +23,9 @@ class GenreNet(pl.LightningModule):
         self.args = args
         self.lr = args.lr
         self.num_classes = num_classes
+        self.train_acc = Accuracy()
+        self.val_acc = Accuracy()
+        self.test_acc = Accuracy()
 
         final_size = input_shape
         for _, kernel, stride, _, _ in _YAMNET_LAYER_DEFS:
@@ -49,23 +52,24 @@ class GenreNet(pl.LightningModule):
         sterograms, labels = batch
         predictions = self(sterograms)
         loss = torch.nn.functional.cross_entropy(predictions, labels)
-        self.log('training_loss', loss, on_epoch=True, on_step=True)
+        self.log('training_loss', loss, on_epoch=True, on_step=False)
+        self.log('training_acc', self.train_acc, on_epoch=True, on_step=False)
         return loss
 
     def validation_step(self, batch, batch_idx):
         sterograms, labels = batch
-        return self._shared_eval(sterograms, labels, 'val')
+        return self._shared_eval(sterograms, labels, 'val', self.val_acc)
 
     def test_step(self, batch, batch_idx):
         sterograms, labels = batch
-        return self._shared_eval(sterograms, labels, 'test')
+        return self._shared_eval(sterograms, labels, 'test', self.test_acc)
 
-    def _shared_eval(self, sterograms, labels, prefix):
+    def _shared_eval(self, sterograms, labels, prefix, acc):
         predictions = self(sterograms)
         loss = torch.nn.functional.cross_entropy(predictions, labels)
-        acc = accuracy(predictions, labels, num_classes=self.num_classes)
-        self.log('{}_loss'.format(prefix), loss, on_epoch=True, on_step=True)
-        self.log('{}_acc'.format(prefix), acc, on_epoch=True, on_step=True)
+        acc(predictions, labels)
+        self.log('{}_loss'.format(prefix), loss, on_epoch=True, on_step=False)
+        self.log('{}_acc'.format(prefix), acc, on_epoch=True, on_step=False)
         return loss
 
     def configure_optimizers(self):
