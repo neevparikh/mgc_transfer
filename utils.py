@@ -18,9 +18,9 @@ genre_list = [
         'Blues',
         'Classical',
         'Country',
-        'Easy, Listening',
+        'Easy Listening',
         'Jazz',
-        'Old-Time, / Historic',
+        'Old-Time / Historic',
         'Soul-RnB',
         'Spoken',
     ]
