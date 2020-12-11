@@ -21,7 +21,7 @@ def get_data(name, dtype, to_keep=None):
         idxs = np.isin(labels, to_keep)
         labels = labels[idxs]
         spects = spects[idxs]
-    labels = genre_to_label(labels)
+    labels = genre_to_label(labels, name)
     spects = np.expand_dims(spects, axis=1)
     return labels, spects.astype(dtype)
 

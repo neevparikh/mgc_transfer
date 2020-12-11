@@ -19,5 +19,7 @@ common_parser.add_argument('--dataset', type=str, required=True,
         help='Dataset type')
 common_parser.add_argument('--pretrained', type=str, required=False,
         help='Path to pretrained model')
+common_parser.add_argument('--replace', action='store_true', required=False,
+        help='Replace the last layer')
 common_parser.add_argument('--include', nargs='*', required=False,
         help='Labels to include, None includes everything')
