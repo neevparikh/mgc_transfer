@@ -58,7 +58,7 @@ class FMA_Large(FMA):
         if stage == 'test':
             self.labels, self.spects = get_data('fma_large_combined.npz', self.dtype)
         self.labels = torch.from_numpy(self.labels)
-        self.num_labels = 161
+        self.num_labels = 16
         self.spects = torch.from_numpy(self.spects)
         self.dataset = TensorDataset(self.spects, self.labels)
         split = [math.floor(len(self.dataset) * x) for x in splits]
