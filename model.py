@@ -52,6 +52,7 @@ class GenreNet(pl.LightningModule):
         sterograms, labels = batch
         predictions = self(sterograms)
         loss = torch.nn.functional.cross_entropy(predictions, labels)
+        self.train_acc(predictions, labels)
         self.log('training_loss', loss, on_epoch=True, on_step=False)
         self.log('training_acc', self.train_acc, on_epoch=True, on_step=False)
         return loss

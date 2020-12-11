@@ -19,7 +19,7 @@ data.prepare_data()
 data.setup('fit')
 if args.pretrained:
     net = GenreNet.load_from_checkpoint(args.pretrained, args=args, input_shape=data.shape,
-            num_classes=161)
+            num_classes=16)
     net.head = torch.nn.Sequential(
             net.head[0],
             net.head[1],

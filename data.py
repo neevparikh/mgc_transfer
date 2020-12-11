@@ -23,8 +23,6 @@ def get_data(name, dtype, to_keep=None):
         spects = spects[idxs]
     labels = genre_to_label(labels)
     spects = np.expand_dims(spects, axis=1)
-    print(labels.shape, labels[:2])
-    print(spects.shape, spects[:2])
     return labels, spects.astype(dtype)
 
 
